@@ -1,9 +1,9 @@
 {
-  "name": "ff-pwd",
-  "title": "ff-pwd",
+  "name": "emojipw",
+  "title": "emojipw",
   "id": "jid1-KcxYvpTq1Lpizw",
-  "description": "a basic add-on",
-  "author": "",
-  "license": "MPL 2.0",
+  "description": "emoji password generator",
+  "author": "Tennyson Holloway",
+  "license": "MIT",
   "version": "0.1"
 }
