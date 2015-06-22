@@ -9,10 +9,10 @@ const other = ":hash: :one: :two: :three: :four: :five: :six: :seven: :eight: :n
 var genereated = false;
 var current_host = "";
 
-const defaultPassword = '[a-zA-Z0-9!@#$%\^&\*\(\)]{18,20}';
+const defaultPassword = "\\w{18,22}";
 
 const sitePasswordRequirements = {
-    'www.stupidsite.com' : '[a-zA-Z0-9!@#$%\^&\*\(\)]{5,6}', //length 5-6
+    'www.stupidsite.com' : "\\w{5,6}", //length 5-6
 }
 
 /* running as FF addon then addon is defined... add handlers for
@@ -29,10 +29,8 @@ if (typeof addon != 'undefined') {
 
 function reset() {
     generated = false;
-    $('#generated').hide();
-    $('.explaination').hide();
-    $('#host').hide();
-    $('.container').fadeTo('fast', 1);
+    $('.generated-overlay').hide();
+    $('.container').fadeTo('slow', 1);
     $('.slot').empty();
     $('.slot').removeClass('locked');
     $('.slot:eq(0)').addClass('active');
@@ -82,8 +80,8 @@ function generate() {
         $('.slot').removeClass('flash');
         $('.slot').addClass('locked');
     }, 300);
-    $('.container').fadeTo("fast", 0.1);
-    $('.generated-overlay').fadeTo('fast', 1);
+    $('.container').fadeTo("slow", 0.1);
+    $('.generated-overlay').fadeTo('slow', 1);
     $('#generated').val(generatePassword());
     $('#generated').select();
     $('#host').val(current_host);
