@@ -1,7 +1,5 @@
 emojione.imageType = "png";
 emojione.sprites = true;
-emojione.imagePathSVG = './assets/svg/';
-emojione.imagePathPNG = './assets/png/';
 emojione.imagePathSVGSprites = './assets/sprites/emojione.sprites.svg'
 const smiles = ":smile: :smiley: :grinning: :blush: :relaxed: :wink: :heart_eyes: :kissing_heart: :kissing_closed_eyes: :kissing: :kissing_smiling_eyes: :stuck_out_tongue_winking_eye: :stuck_out_tongue_closed_eyes: :stuck_out_tongue: :flushed: :grin: :pensive: :relieved: :unamused: :disappointed: :persevere: :cry: :joy: :sob: :sleepy: :disappointed_relieved: :cold_sweat: :sweat_smile: :sweat: :weary: :tired_face: :fearful: :scream: :angry: :rage: :triumph: :confounded: :laughing: :yum: :mask: :sunglasses: :sleeping: :dizzy_face: :astonished: :worried: :frowning: :anguished: :smiling_imp: :imp: :open_mouth: :grimacing: :neutral_face: :confused: :hushed: :no_mouth: :innocent: :smirk: :expressionless: :man_with_gua_pi_mao: :man_with_turban: :cop: :construction_worker: :guardsman: :baby: :boy: :girl: :man: :woman: :older_man: :older_woman: :person_with_blond_hair: :angel: :princess: :smiley_cat: :smile_cat: :heart_eyes_cat: :kissing_cat: :smirk_cat: :scream_cat: :crying_cat_face: :joy_cat: :pouting_cat: :japanese_ogre: :japanese_goblin: :see_no_evil: :hear_no_evil: :speak_no_evil: :skull: :alien: :poop: :fire: :sparkles: :star2: :dizzy: :boom: :anger: :sweat_drops: :droplet: :zzz: :dash: :ear: :eyes: :nose: :tongue: :lips: :thumbsup: :thumbsdown: :ok_hand: :punch: :fist: :v: :wave: :raised_hand: :open_hands: :point_up_2: :point_down: :point_right: :point_left: :raised_hands: :pray: :point_up: :clap: :muscle: :walking: :runner: :dancer: :couple: :family: :two_men_holding_hands: :two_women_holding_hands: :couplekiss: :couple_with_heart: :dancers: :ok_woman: :no_good: :information_desk_person: :raising_hand: :massage: :haircut: :nail_care: :bride_with_veil: :person_with_pouting_face: :person_frowning: :bow: :tophat: :crown: :womans_hat: :athletic_shoe: :mans_shoe: :sandal: :high_heel: :boot: :shirt: :necktie: :womans_clothes: :dress: :running_shirt_with_sash: :jeans: :kimono: :bikini: :briefcase: :handbag: :pouch: :purse: :eyeglasses: :ribbon: :closed_umbrella: :lipstick: :yellow_heart: :blue_heart: :purple_heart: :green_heart: :heart: :broken_heart: :heartpulse: :heartbeat: :two_hearts: :sparkling_heart: :revolving_hearts: :cupid: :love_letter: :kiss: :ring: :gem: :bust_in_silhouette: :busts_in_silhouette: :speech_balloon: :footprints: :thought_balloon:";
 const nature = ":dog: :wolf: :cat: :mouse: :hamster: :rabbit: :frog: :tiger: :koala: :bear: :pig: :pig_nose: :cow: :boar: :monkey_face: :monkey: :horse: :sheep: :elephant: :panda_face: :penguin: :bird: :baby_chick: :hatched_chick: :hatching_chick: :chicken: :snake: :turtle: :bug: :bee: :ant: :beetle: :snail: :octopus: :shell: :tropical_fish: :fish: :dolphin: :whale: :whale2: :cow2: :ram: :rat: :water_buffalo: :tiger2: :rabbit2: :dragon: :racehorse: :goat: :rooster: :dog2: :pig2: :mouse2: :ox: :dragon_face: :blowfish: :crocodile: :camel: :dromedary_camel: :leopard: :cat2: :poodle: :feet: :bouquet: :cherry_blossom: :tulip: :four_leaf_clover: :rose: :sunflower: :hibiscus: :maple_leaf: :leaves: :fallen_leaf: :herb: :ear_of_rice: :mushroom: :cactus: :palm_tree: :evergreen_tree: :deciduous_tree: :chestnut: :seedling: :blossom: :globe_with_meridians: :sun_with_face: :full_moon_with_face: :new_moon_with_face: :new_moon: :waxing_crescent_moon: :first_quarter_moon: :waxing_gibbous_moon: :full_moon: :waning_gibbous_moon: :last_quarter_moon: :waning_crescent_moon: :last_quarter_moon_with_face: :first_quarter_moon_with_face: :crescent_moon: :earth_africa: :earth_americas: :earth_asia: :volcano: :milky_way: :stars: :star: :sunny: :partly_sunny: :cloud: :zap: :umbrella: :snowflake: :snowman: :cyclone: :foggy: :rainbow: :ocean:";
@@ -11,10 +9,33 @@ const other = ":hash: :one: :two: :three: :four: :five: :six: :seven: :eight: :n
 var genereated = false;
 var current_host = "";
 
+const defaultPassword = '[a-zA-Z0-9!@#$%\^&\*\(\)]{18,20}';
+
+const sitePasswordRequirements = {
+    'www.stupidsite.com' : '[a-zA-Z0-9!@#$%\^&\*\(\)]{5,6}', //length 5-6
+}
+
+/* running as FF addon then addon is defined... add handlers for
+ * port communications
+ */
 if (typeof addon != 'undefined') {
     addon.port.on("panel_open", function handleMessage(e) {
-        current_host = e;
+        current_host = e; //get location.host from current tab
     });
+    addon.port.on("panel_hide", function handleMessage(e) {
+        reset();
+    });
+}
+
+function reset() {
+    generated = false;
+    $('#generated').hide();
+    $('.explaination').hide();
+    $('#host').hide();
+    $('.container').fadeTo('fast', 1);
+    $('.slot').empty();
+    $('.slot').removeClass('locked');
+    $('.slot:eq(0)').addClass('active');
 }
 
 function populate_bank(category) {
@@ -37,12 +58,19 @@ function generatePassword() {
     $('.slot').find('use').each(function() {
         emoji_pass += $(this).attr('xlink:href').replace("./assets/sprites/emojione.sprites.svg#emoji-", "");
     });
+
     if (typeof current_host == 'undefined')
         current_host = "";
-    console.log("Seeding random with: "+emoji_pass+current_host);
 
-    Math.seedrandom(emoji_pass+current_host);
-    emoji_pass = new RandExp('[a-z]{16,20}').gen();
+
+    Math.seedrandom(sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(emoji_pass+current_host)));
+
+    site_regex = defaultPassword;
+    if (typeof sitePasswordRequirements[current_host] != 'undefined') {
+        site_regex = sitePasswordRequirements[current_host];
+    }
+
+    emoji_pass = new RandExp(site_regex).gen();
 
     return emoji_pass;
 }
@@ -55,10 +83,10 @@ function generate() {
         $('.slot').addClass('locked');
     }, 300);
     $('.container').fadeTo("fast", 0.1);
-    $('#generated').val(generatePassword()).fadeTo('fast', 1);
+    $('.generated-overlay').fadeTo('fast', 1);
+    $('#generated').val(generatePassword());
     $('#generated').select();
-    $('#host').val(current_host).fadeTo('fast', 1);
-    $('.explaination').fadeTo('fast', 1);
+    $('#host').val(current_host);
     generated = true;
 }
 
@@ -114,7 +142,6 @@ $(document).ready(function() {
     });
 
     $('#categories > li').click(function() {
-        console.log($(this).attr('id').replace("cat-", ""));
         populate_bank($(this).attr('id').replace("cat-", ""));
     });
 
@@ -125,14 +152,7 @@ $(document).ready(function() {
 
     $('html').click(function(e) {
         if (generated == true && $(e.target).closest('input').length === 0) {
-            generated = false;
-            $('#generated').hide();
-            $('.explaination').hide();
-            $('#host').hide();
-            $('.container').fadeTo('fast', 1);
-            $('.slot').empty();
-            $('.slot').removeClass('locked');
-            $('.slot:eq(0)').addClass('active');
+            reset();
             e.preventDefault();
             e.stopPropagation();
         }

@@ -24,27 +24,30 @@
       </div>
     </div>
     <ul id="categories">
-      <li id="cat-0" data-l10n-id="smiles_id"></li>
-      <li id="cat-1" data-l10n-id="nature_id"></li>
-      <li id="cat-2" data-l10n-id="objects_id"></li>
-      <li id="cat-3" data-l10n-id="places_id"></li>
-      <li id="cat-4" data-l10n-id="other_id"></li>
+      <li id="cat-0" data-l10n-id="smiles_id">smiles</li>
+      <li id="cat-1" data-l10n-id="nature_id">nature</li>
+      <li id="cat-2" data-l10n-id="objects_id">objects</li>
+      <li id="cat-3" data-l10n-id="places_id">places</li>
+      <li id="cat-4" data-l10n-id="other_id">other</li>
     </ul>
     <ul id="bank">
     </ul>
   </div>
   <div class="warm">
   </div>
-  <input type="text" id="generated">
-  <p class="explaination">
-    DRAG AND DROP!<br>or<br>COPY AND PASTE!<br>
-    Is the site below wrong? Change it!
-  </p>
-  <input type="text" id="host">
+  <div class="generated-overlay">
+      <input type="text" id="generated">
+      <p class="explaination">
+        COPY AND PASTE!<br>
+        Is the site below wrong? Change it!
+      </p>
+      <input type="text" id="host" placeholder="example.com">
+  </div>
   <script src="./assets/js/jq.js"></script>
   <script src="./assets/js/emojione.min.js"></script>
   <script src="./assets/js/randexp.min.js"></script>
   <script src="./assets/js/seedrandom.min.js"></script>
+  <script src="./assets/js/sjcl.js"></script>
   <script src="./assets/js/js.js"></script>
 </body>
 
